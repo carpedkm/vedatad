@@ -19,6 +19,10 @@ class SingleStageDetector(BaseDetector):
         self.head = build_head(head)
 
         self.init_weights()
+        ## Customizing the code
+        # self.encoding = nn.Sequential(
+        #     nn.Conv1d()
+        # )
 
     def init_weights(self):
         self.backbone.init_weights()
@@ -34,7 +38,8 @@ class SingleStageDetector(BaseDetector):
     def forward_impl(self, x):
         feats = self.backbone(x)
         if self.neck:
-            feats = self.neck(feats)
+            feats, original_feat = self.neck(feats)
+        
         feats = self.head(feats)
         return feats
 
@@ -47,3 +52,6 @@ class SingleStageDetector(BaseDetector):
             with torch.no_grad():
                 feats = self.forward_impl(x)
         return feats
+
+    # def forward_smiliarity(self, x):
+        

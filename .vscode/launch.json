@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "RunCh",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/trainval.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config",
+                "configs/trainval/daotad/daotad_i3d_r50_e700_thumos14_rgb.py",
+                "--launcher",
+                "none"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0,1,2,3"
+            }
+        },
+    ]
+}

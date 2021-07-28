@@ -11,7 +11,8 @@ from vedacore.misc import registry
 
 
 @registry.register_module('dataset')
-class ConcatDataset(_ConcatDataset):
+class ConcatDataset(_ConcatDataset): # builder calls this -> as this is wrapper class -> calls registry.register_module('dataset') 
+    #-> with the class to be the argument for that
     """A wrapper of concatenated dataset.
 
     Same as :obj:`torch.utils.data.dataset.ConcatDataset`, but

@@ -6,8 +6,8 @@ class EpochBasedLooper(BaseLooper):
     def __init__(self, modes, dataloaders, engines, hook_pool, logger,
                  workdir):
         super().__init__(modes, dataloaders, engines, hook_pool, logger,
-                         workdir)
-
+                         workdir) 
+# INIT : cfg.modes, dataloaders, engines, hook_pool, logger, cfg.workdir
     def epoch_loop(self, mode):
         self.mode = mode
         dataloader = self.dataloaders[mode]
@@ -20,7 +20,7 @@ class EpochBasedLooper(BaseLooper):
             self._inner_iter = idx + 1
             self.hook_pool.fire(f'after_{mode}_iter', self)
 
-    def start(self, max_epochs):
+    def start(self, max_epochs): # max_epochs = cfg.max_epochs
         self.hook_pool.fire('before_run', self)
         while self.epoch < max_epochs:
             for mode in self.modes:

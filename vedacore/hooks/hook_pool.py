@@ -23,4 +23,4 @@ class HookPool:
 
     def fire(self, hook_type, looper):
         for hook in self.hooks:
-            getattr(hook, hook_type)(looper)
+            getattr(hook, hook_type)(looper) 

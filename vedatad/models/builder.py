@@ -16,7 +16,7 @@ def build(cfg, module_name, default_args=None):
     Returns:
         nn.Module: A built nn module.
     """
-    if isinstance(cfg, list):
+    if isinstance(cfg, list): # So concatenate the network as nn.Sequential (SRM, TDM, TFPN)
         modules = [
             build_from_cfg(cfg_, registry, module_name, default_args)
             for cfg_ in cfg

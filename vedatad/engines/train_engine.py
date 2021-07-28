@@ -8,7 +8,7 @@ from .base_engine import BaseEngine
 class TrainEngine(BaseEngine):
 
     def __init__(self, model, criterion, optimizer):
-        super().__init__(model)
+        super().__init__(model) ## with given model -> make model (model is configuration file -> here: SingleStageDetector)
         self.criterion = build_criterion(criterion)
         self.optimizer = build_optimizer(self.model, optimizer)
 
@@ -29,3 +29,4 @@ class TrainEngine(BaseEngine):
         losses = self.criterion.loss(feats, video_metas, gt_segments,
                                      gt_labels, gt_segments_ignore)
         return losses
+        # return losses, feats

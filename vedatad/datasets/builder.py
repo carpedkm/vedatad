@@ -109,7 +109,7 @@ def build_dataloader(dataset,
         num_workers=num_workers, rank=rank,
         seed=seed) if seed is not None else None
 
-    data_loader = DataLoader(
+    data_loader = DataLoader( # building the dataloader
         dataset,
         batch_size=batch_size,
         sampler=sampler,

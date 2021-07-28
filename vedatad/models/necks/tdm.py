@@ -22,7 +22,7 @@ class TDM(nn.Module):
                  conv_cfg=dict(typename='Conv1d'),
                  norm_cfg=dict(typename='BN1d'),
                  act_cfg=dict(typename='ReLU'),
-                 out_indices=(0, 1, 2, 3, 4)):
+                 out_indices=(0, 1, 2, 3, 4)): # FIXED
         super(TDM, self).__init__()
 
         self.in_channels = in_channels
@@ -54,7 +54,8 @@ class TDM(nn.Module):
             layer_name = f'layer{i + 1}'
             self.add_module(layer_name, td_layer)
             self.td_layers.append(layer_name)
-
+        # FIXING
+        
     @staticmethod
     def make_td_layer(num_layer, in_channels, out_channels, kernel_size,
                       stride, padding, dilation, conv_cfg, norm_cfg, act_cfg):
@@ -100,11 +101,12 @@ class TDM(nn.Module):
                     m.eval()
 
     def forward(self, x):
+        self.feat_pass = x
         outs = []
         if 0 in self.out_indices:
             outs.append(x)
 
-        for i, layer_name in enumerate(self.td_layers):
+        for i, layer_name in enumerate(self.td_layers):# Calling the layer one by one
             layer = getattr(self, layer_name)
             x = layer(x)
             if (i + 1) in self.out_indices:
@@ -112,4 +114,4 @@ class TDM(nn.Module):
         if len(outs) == 1:
             return outs[0]
 
-        return tuple(outs)
+        return tuple(outs), self.feat_pass

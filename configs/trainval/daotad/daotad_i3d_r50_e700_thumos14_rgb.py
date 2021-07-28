@@ -100,6 +100,7 @@ model = dict(
             norm_cfg=dict(typename='SyncBN'),
             act_cfg=dict(typename='ReLU'),
             out_indices=(0, 1, 2, 3, 4)),
+            # feat_pass=
         dict(
             typename='FPN',
             in_channels=[2048, 512, 512, 512, 512],

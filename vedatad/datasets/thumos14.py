@@ -10,7 +10,7 @@ from .custom import CustomDataset
 
 
 @registry.register_module('dataset')
-class Thumos14Dataset(CustomDataset):
+class Thumos14Dataset(CustomDataset): # THIS IS THE DATASET WE USE!
     """Thumos14 dataset for temporal action detection."""
 
     CLASSES = ('BaseballPitch', 'BasketballDunk', 'Billiards', 'CleanAndJerk',

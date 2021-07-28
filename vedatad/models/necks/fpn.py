@@ -76,7 +76,7 @@ class FPN(nn.Module):
                  conv_cfg=None,
                  norm_cfg=None,
                  act_cfg=None,
-                 upsample_cfg=dict(mode='nearest')):
+                 upsample_cfg=dict(mode='nearest')): # FIX HERE
         super(FPN, self).__init__()
         assert isinstance(in_channels, list)
         self.in_channels = in_channels
@@ -155,6 +155,7 @@ class FPN(nn.Module):
                     act_cfg=act_cfg,
                     inplace=False)
                 self.fpn_convs.append(extra_fpn_conv)
+        # self.feat_pass = feat_pass
 
     # default init_weights for conv(msra) and norm in ConvModule
     def init_weights(self):
@@ -163,10 +164,11 @@ class FPN(nn.Module):
             if isinstance(m, _ConvNd):
                 xavier_init(m, distribution='uniform')
 
-    def forward(self, inputs):
+    def forward(self, (inputs, feature_pass)):
         """Forward function."""
         assert len(inputs) == len(self.in_channels)
-
+        # FIXED
+        self.feat_pass = feature_pass
         # build laterals
         laterals = [
             lateral_conv(inputs[i + self.start_level])
@@ -217,4 +219,5 @@ class FPN(nn.Module):
                         outs.append(self.fpn_convs[i](F.relu(outs[-1])))
                     else:
                         outs.append(self.fpn_convs[i](outs[-1]))
-        return tuple(outs)
+        print('[FPN] >> Passing the feature', feat_pass)
+        return tuple(outs), self.feat_pass # FIXED

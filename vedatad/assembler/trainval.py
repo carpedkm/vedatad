@@ -15,17 +15,21 @@ def trainval(cfg, distributed, logger):
     dataloaders = dict()
     engines = dict()
     find_unused_parameters = cfg.get('find_unused_parameters', False)
+    
     if 'train' in cfg.modes:
-        dataset = build_dataset(cfg.data.train)
-
+        print('##### DATASET - train BUILDING #####')
+        dataset = build_dataset(cfg.data.train) # build_dataset -> registry : build_from_cfg -> registry.get [class]
+        # -> class 'vedatad.datasets.thumos14.Thumos14Dataset 
+        print('##### DATA LOADER - train BUILDING #####')
         dataloaders['train'] = build_dataloader(
             dataset,
             cfg.data.samples_per_gpu,
             cfg.data.workers_per_gpu,
             dist=distributed,
             seed=cfg.get('seed', None))
-        engine = build_engine(cfg.train_engine)
-
+        print('##### ENGINE BUILDING #####')
+        engine = build_engine(cfg.train_engine) # build the model here
+        # Calls the 'vedatad.engines.train_engine.TrainEngine'
         if distributed:
             engine = MMDistributedDataParallel(
                 engine.cuda(),
@@ -39,8 +43,9 @@ def trainval(cfg, distributed, logger):
         engines['train'] = engine
 
     if 'val' in cfg.modes:
+        print('##### DATASET - val BUILDING #####')
         dataset = build_dataset(cfg.data.val, dict(test_mode=True))
-
+        print('##### DATA LOADER - val BUILDING #####')
         dataloaders['val'] = build_dataloader(
             dataset, 1, 1, dist=distributed, shuffle=False)
 
@@ -55,13 +60,14 @@ def trainval(cfg, distributed, logger):
             engine = MMDataParallel(
                 engine.cuda(), device_ids=[torch.cuda.current_device()])
         engines['val'] = engine
-
+    print('##### HOOK POOL #####')
     hook_pool = HookPool(cfg.hooks, cfg.modes, logger)
-
+    print('##### EPOCH BASED LOOPER -> LOOPER #####')
     looper = EpochBasedLooper(cfg.modes, dataloaders, engines, hook_pool,
-                              logger, cfg.workdir)
+                              logger, cfg.workdir) 
 
     if isinstance(looper, EpochBasedLooper):
+        print('##### LOOPER -> REGISTER_HOOK #####')
         looper.hook_pool.register_hook(dict(typename='WorkerInitHook'))
         if distributed:
             looper.hook_pool.register_hook(
@@ -79,4 +85,5 @@ def trainval(cfg, distributed, logger):
             logger.warning('optimizer is not needed in train mode')
         if 'meta' in cfg:
             logger.warning('meta is not needed in train mode')
+    print('##### LOOPER -> START #####')    
     looper.start(cfg.max_epochs)

@@ -5,14 +5,15 @@ import time
 
 from vedacore.misc import Config, mkdir_or_exist, set_random_seed
 from vedacore.parallel import init_dist
-from vedatad.assembler import trainval
+from vedatad.assembler import trainval # calls for the first time in the code
 from vedatad.misc import get_root_logger
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
-    parser.add_argument('config', help='train config file path')
+    parser.add_argument('--config', help='train config file path') # configs/trainval/daotad/daotad_i3d_r50_e700_thumos14_rgb.py
     parser.add_argument('--workdir', help='the dir to save logs and models')
+    # workdir
     parser.add_argument(
         '--launcher',
         choices=['none', 'pytorch'],
@@ -53,6 +54,7 @@ def main():
     shutil.copy(args.config, cfg.workdir)
     # init the logger before other steps
     timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
+    print(cfg.workdir)
     log_file = osp.join(cfg.workdir, f'{timestamp}.log')
     logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
 
