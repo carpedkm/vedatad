@@ -17,7 +17,10 @@ class TrainEngine(BaseEngine):
         return feats
 
     def forward(self, data):
-        return self.forward_impl(**data)
+        print('TRAIN ENGINE EXEC - forward')
+        x1 = self.forward_impl(**data)
+
+        return x1
 
     def forward_impl(self,
                      imgs,
@@ -25,8 +28,11 @@ class TrainEngine(BaseEngine):
                      gt_segments,
                      gt_labels,
                      gt_segments_ignore=None):
-        feats = self.extract_feats(imgs)
+        feats, x2 = self.extract_feats(imgs)
         losses = self.criterion.loss(feats, video_metas, gt_segments,
                                      gt_labels, gt_segments_ignore)
+
+        print("x2 print: ", x2.shape)
+
         return losses
         # return losses, feats

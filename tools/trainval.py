@@ -11,7 +11,7 @@ from vedatad.misc import get_root_logger
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
-    parser.add_argument('--config', help='train config file path') # configs/trainval/daotad/daotad_i3d_r50_e700_thumos14_rgb.py
+    parser.add_argument('config', help='train config file path') # configs/trainval/daotad/daotad_i3d_r50_e700_thumos14_rgb.py
     parser.add_argument('--workdir', help='the dir to save logs and models')
     # workdir
     parser.add_argument(

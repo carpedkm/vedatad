@@ -38,10 +38,12 @@ class SingleStageDetector(BaseDetector):
     def forward_impl(self, x):
         feats = self.backbone(x)
         if self.neck:
-            feats, original_feat = self.neck(feats)
-        
-        feats = self.head(feats)
-        return feats
+            pass_in_to_head = self.neck(feats) # FIXED
+        print('>>>>> SINGLESTAGE_DETECTOR : ', type(pass_in_to_head))
+        if isinstance(pass_in_to_head, list):
+            print('pass in to head', pass_in_to_head[1].shape)
+        feats = self.head(pass_in_to_head[0])
+        return feats, pass_in_to_head[1]
 
     def forward(self, x, train=True):
         if train:

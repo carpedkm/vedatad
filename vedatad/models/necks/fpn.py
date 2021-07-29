@@ -164,7 +164,9 @@ class FPN(nn.Module):
             if isinstance(m, _ConvNd):
                 xavier_init(m, distribution='uniform')
 
-    def forward(self, (inputs, feature_pass)):
+    def forward(self, inputs_in): # FIXED
+        inputs = inputs_in[0]
+        feature_pass = inputs_in[1]
         """Forward function."""
         assert len(inputs) == len(self.in_channels)
         # FIXED
@@ -219,5 +221,5 @@ class FPN(nn.Module):
                         outs.append(self.fpn_convs[i](F.relu(outs[-1])))
                     else:
                         outs.append(self.fpn_convs[i](outs[-1]))
-        print('[FPN] >> Passing the feature', feat_pass)
-        return tuple(outs), self.feat_pass # FIXED
+        # print('[FPN] >> Passing the feature', self.feat_pass)
+        return [tuple(outs), self.feat_pass] # FIXED

@@ -112,6 +112,6 @@ class TDM(nn.Module):
             if (i + 1) in self.out_indices:
                 outs.append(x)
         if len(outs) == 1:
-            return outs[0]
-
-        return tuple(outs), self.feat_pass
+            return [outs[0], self.feat_pass]
+        
+        return [tuple(outs), self.feat_pass]

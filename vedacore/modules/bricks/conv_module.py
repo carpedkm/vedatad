@@ -173,7 +173,7 @@ class ConvModule(nn.Module):
         if self.with_norm:
             constant_init(self.norm, 1, bias=0)
 
-    def forward(self, x, activate=True, norm=True):
+    def forward(self, x, activate=True, norm=True):  # FIXED
         for layer in self.order:
             if layer == 'conv':
                 if self.with_explicit_padding:
