@@ -4,7 +4,7 @@ import torch.nn as nn
 from vedacore.misc import registry
 from ..builder import build_backbone, build_head, build_neck
 from .base_detector import BaseDetector
-
+import numpy as np
 
 @registry.register_module('detector')
 class SingleStageDetector(BaseDetector):
@@ -38,12 +38,13 @@ class SingleStageDetector(BaseDetector):
     def forward_impl(self, x):
         feats = self.backbone(x)
         if self.neck:
-            pass_in_to_head = self.neck(feats) # FIXED
-        print('>>>>> SINGLESTAGE_DETECTOR : ', type(pass_in_to_head))
+            pass_in_to_head = self.neck(feats) # FIXED # passed in to head would get tuple
+        # print('>>>>> SINGLESTAGE_DETECTOR : ', type(pass_in_to_head))
+        to_contrastive = pass_in_to_head[1]
         if isinstance(pass_in_to_head, list):
-            print('pass in to head', pass_in_to_head[1].shape)
-        feats = self.head(pass_in_to_head[0])
-        return feats, pass_in_to_head[1]
+            # print('pass in to head', pass_in_to_head[0][0].shape, pass_in_to_head[0][1].shape, pass_in_to_head[0][2].shape, pass_in_to_head[0][3].shape, pass_in_to_head[0][4].shape)
+            feats = self.head(pass_in_to_head[0])
+        return feats, to_contrastive
 
     def forward(self, x, train=True):
         if train:

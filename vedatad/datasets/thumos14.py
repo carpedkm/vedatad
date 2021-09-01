@@ -82,6 +82,7 @@ class Thumos14Dataset(CustomDataset): # THIS IS THE DATASET WE USE!
                 segments=segments.astype(np.float32),
                 labels=labels.astype(np.int64),
                 segments_ignore=segments_ignore.astype(np.float32))
+            # data_info['cont_map'] = 
 
             data_infos.append(data_info)
 

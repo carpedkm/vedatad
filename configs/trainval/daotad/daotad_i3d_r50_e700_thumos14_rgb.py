@@ -9,7 +9,7 @@ overlap_ratio = 0.25
 
 data = dict(
     samples_per_gpu=4,
-    workers_per_gpu=4,
+    workers_per_gpu=0,
     train=dict(
         typename=dataset_type,
         ann_file=data_root + 'annotations/val.json',
@@ -120,7 +120,12 @@ model = dict(
         use_sigmoid=use_sigmoid,
         conv_cfg=dict(typename='Conv1d'),
         norm_cfg=dict(typename='SyncBN'),
-    ))
+    )
+    # contrastive_module=dict(#refactoring to implement contrastive learning
+    #     typename='Contrastive',
+        
+    # )
+    )
 
 # 3. engines
 meshgrid = dict(
@@ -139,7 +144,7 @@ segment_coder = dict(
 
 train_engine = dict(
     typename='TrainEngine',
-    model=model,
+    model=model, # it implements the model here
     criterion=dict(
         typename='SegmentAnchorCriterion',
         num_classes=num_classes,

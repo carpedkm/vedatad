@@ -5,6 +5,7 @@ from copy import deepcopy
 
 import numpy as np
 from torch.utils.data import Dataset
+import torch
 
 import vedacore.fileio as fileio
 from vedacore.misc import registry
@@ -83,7 +84,7 @@ class CustomDataset(Dataset):
         if not self.test_mode:
             self._set_group_flag()
         # processing pipeline
-        self.pipeline = Compose(pipeline)
+        self.pipeline = Compose(pipeline) # It gets the transformation related configuration pipeline
 
     def __len__(self):
         """Total number of samples of data."""
@@ -127,7 +128,7 @@ class CustomDataset(Dataset):
         results['proposal_file'] = self.proposal_file
         results['segment_fields'] = []
 
-    def _filter_videos(self, min_size=32):
+    def _filter_videos(self, min_size=32): # It is executed first, before the training begins
         """Filter images too small."""
         valid_inds = []
         for i, video_info in enumerate(self.data_infos):
@@ -153,6 +154,7 @@ class CustomDataset(Dataset):
         return np.random.choice(pool)
 
     def __getitem__(self, idx):
+        # print('>> [DATASET] GET ITEM, idx : ', idx)
         """Get training/test data after pipeline.
 
         Args:
@@ -165,15 +167,50 @@ class CustomDataset(Dataset):
 
         if self.test_mode:
             data = self.prepare_test_video(idx)
-            return data
+            return data 
 
         while True:
-            data = self.prepare_train_video(idx)
+            data = self.prepare_train_video(idx) # In this refactored code, contrastive feature map label is included
             if data is None:
                 idx = self._rand_another(idx)
                 continue
 
             return data
+    #Customization code for contrastive learning
+    def contrastive_mapping(self, idx_to_pos, original_frame):
+        self.frames = original_frame
+        self.idx_to_pos = idx_to_pos
+        
+        mapping_idx  = torch.round(self.idx_to_pos / self.frames  * 96)
+        map = []
+        # making the group:
+        temp_group = []
+        group = []
+        for i in np.arange(96):
+            if i in mapping_idx:
+                group.append(temp_group)
+                temp_group = []
+            else :
+                temp_group.append(i)
+        group.append(temp_group)
+        # making the map:
+        for i in np.arange(96):
+            row = []
+            flag = 0
+            for j in np.arange(96):
+                if j in mapping_idx or i in mapping_idx:
+                    flag += 1
+                    row.append(0)
+                elif j in group[flag] and i in group[flag]:
+                    row.append(1)
+                else:
+                    row.append(-1)
+
+
+            map.append(row)
+        map = torch.FloatTensor(map)
+
+        return map
 
     def prepare_train_video(self, idx):
         """Get training data and annotations after pipeline.
@@ -195,7 +232,11 @@ class CustomDataset(Dataset):
         if self.proposals is not None:
             results['proposals'] = self.proposals[idx]
         self.pre_pipeline(results)
-        return self.pipeline(results)
+        self.to_label = self.pipeline(results) # IN NEED : Also return the contrastive map
+        self.map = self.contrastive_mapping(torch.flatten(self.to_label['gt_segments'].data), self.to_label['video_metas'].data['tsize'])
+        
+        return self.to_label, self.map # with additional contrastive learning feature map label
+
 
     def prepare_test_video(self, idx):
         """Get testing data after pipeline.

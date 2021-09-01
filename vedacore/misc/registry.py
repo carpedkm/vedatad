@@ -66,7 +66,7 @@ class Registry:
         dd[cls_name] = cls
 
     def register_module(self, module_name='module'): # wrapper function in dataset_wrapper calls this
-
+        
         def _register(cls):
             self._register_module(cls, module_name) # calls this function
             return cls

@@ -9,6 +9,7 @@ from vedatad.assembler import trainval # calls for the first time in the code
 from vedatad.misc import get_root_logger
 
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
     parser.add_argument('config', help='train config file path') # configs/trainval/daotad/daotad_i3d_r50_e700_thumos14_rgb.py
@@ -28,7 +29,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    cfg = Config.fromfile(args.config)
+    cfg = Config.fromfile(args.config) # loads the configuration file as dictionary type
 
     if args.launcher == 'none':
         distributed = False

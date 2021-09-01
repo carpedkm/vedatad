@@ -33,7 +33,7 @@ class InferEngine(BaseEngine):
             dets(list): len(dets) is the batch size, len(dets[ii]) = #classes,
                 dets[ii][jj] is an np.array whose shape is N*3
         """
-        feats = self.extract_feats(imgs)
+        feats = self.extract_feats(imgs)[0]
 
         featmap_tsizes = [feat.shape[2] for feat in feats[0]]
         dtype = feats[0][0].dtype

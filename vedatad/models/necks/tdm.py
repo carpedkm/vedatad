@@ -114,4 +114,4 @@ class TDM(nn.Module):
         if len(outs) == 1:
             return [outs[0], self.feat_pass]
         
-        return [tuple(outs), self.feat_pass]
+        return [tuple(outs), self.feat_pass] # second one is the original one

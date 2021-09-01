@@ -107,4 +107,5 @@ class RetinaHead(AnchorHead):
 
         cls_score = self.retina_cls(cls_feat)
         segment_pred = self.retina_reg(reg_feat)
+        # print('SEGMENT PRED')
         return cls_score, segment_pred
